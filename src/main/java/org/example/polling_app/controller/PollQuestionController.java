@@ -35,6 +35,17 @@ public class PollQuestionController {
         return repository.findByTeacherId(teacherId);
     }
 
+    @GetMapping("/active/{teacherId}")
+    public PollQuestion getActiveQuestion(@PathVariable Long teacherId) {
+        List<PollQuestion> questions = repository.findByTeacherId(teacherId);
+
+        if (questions.isEmpty()) return null;
+
+        // simplest version: return most recent
+        return questions.get(questions.size() - 1);
+    }
+
+    
     @GetMapping("/{id}")
     public PollQuestion getById(@PathVariable Long id) {
         return repository.findById(id).orElse(null);
