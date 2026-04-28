@@ -34,4 +34,9 @@ public class PollQuestionController {
     public List<PollQuestion> getQuestionsByTeacher(@PathVariable Long teacherId) {
         return repository.findByTeacherId(teacherId);
     }
+
+    @GetMapping("/{id}")
+    public PollQuestion getById(@PathVariable Long id) {
+        return repository.findById(id).orElse(null);
+    }
 }
