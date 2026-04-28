@@ -42,10 +42,10 @@ public class PollQuestionController {
         if (questions.isEmpty()) return null;
 
         // simplest version: return most recent
-        return questions.get(questions.size() - 1);
+        return repository.findFirstByTeacherIdOrderByCreatedAtDesc(teacherId);
     }
 
-    
+
     @GetMapping("/{id}")
     public PollQuestion getById(@PathVariable Long id) {
         return repository.findById(id).orElse(null);
