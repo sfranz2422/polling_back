@@ -16,6 +16,7 @@ public class PollQuestion {
 
     private Long teacherId;
     private String questionText;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public void setId(Long id) {
         this.id = id;

@@ -30,5 +30,8 @@ public class PollQuestionController {
         return repository.findAll();
     }
 
-
+    @GetMapping("/teacher/{teacherId}")
+    public List<PollQuestion> getQuestionsByTeacher(@PathVariable Long teacherId) {
+        return repository.findByTeacherId(teacherId);
+    }
 }
