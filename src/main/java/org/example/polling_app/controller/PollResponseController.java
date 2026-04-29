@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/poll-responses")
-@CrossOrigin(origins = "*")
 public class PollResponseController {
 
     private final PollResponseRepository repository;

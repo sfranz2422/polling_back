@@ -14,7 +14,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("*")
+                        .allowedOrigins("https://polling-front-ver2.onrender.com")
                         .allowedMethods("*");
             }
         };
