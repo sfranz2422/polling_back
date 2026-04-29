@@ -21,6 +21,7 @@ public class PollQuestion {
     private String optionC;
     private String optionD;
     private LocalDateTime createdAt = LocalDateTime.now();
+    private Long roomId;
 
     public String getOptionA() {
                 return optionA;
@@ -68,6 +69,13 @@ public class PollQuestion {
     public String getQuestionText() {
         return questionText;
     }
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
+    }
+    public Long getRoomId() {
+        return roomId;
+    }
+
 
 
     // getters/setters

@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface PollResponseRepository extends JpaRepository<PollResponse, Long> {
     List<PollResponse> findByQuestionId(Long questionId);
-
 }
