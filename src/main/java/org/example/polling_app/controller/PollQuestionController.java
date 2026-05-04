@@ -9,64 +9,54 @@ import org.example.polling_app.repository.RoomRepository;
 
 import java.util.List;
 import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/questions")
+@CrossOrigin("*")
 public class PollQuestionController {
 
-    private final PollQuestionRepository repository;
-    private final RoomRepository roomRepository;
+    private final PollQuestionRepository pollQuestionRepository;
 
-    public PollQuestionController(PollQuestionRepository repository, RoomRepository roomRepository) {
-        this.repository = repository;
-        this.roomRepository = roomRepository;
+    public PollQuestionController(PollQuestionRepository pollQuestionRepository) {
+        this.pollQuestionRepository = pollQuestionRepository;
     }
 
-    // Create a question (teacher action)
+    // ✅ Get logged-in teacher's questions
+    @GetMapping("/my")
+    public List<PollQuestion> getMyQuestions(@RequestHeader("Authorization") String token) {
+
+        Long teacherId = extractTeacherId(token);
+
+        return pollQuestionRepository.findByTeacherId(teacherId);
+    }
+
+    // ✅ Create question (assign teacher automatically)
     @PostMapping
-    public PollQuestion create(@RequestBody PollQuestion question) {
-        return repository.save(question);
+    public PollQuestion createQuestion(
+            @RequestHeader("Authorization") String token,
+            @RequestBody PollQuestion question) {
+
+        Long teacherId = extractTeacherId(token);
+
+        question.setTeacherId(teacherId);
+
+        return pollQuestionRepository.save(question);
     }
 
-    // Get all questions (teacher dashboard)
-    @GetMapping
-    public List<PollQuestion> getAll() {
-        return repository.findAll();
-    }
-
-    @GetMapping("/teacher/{teacherId}")
-    public List<PollQuestion> getQuestionsByTeacher(@PathVariable Long teacherId) {
-        return repository.findByTeacherId(teacherId);
-    }
-
-
-
-    @GetMapping("/room/{roomId}")
-    public List<PollQuestion> getQuestionsByRoom(@PathVariable Long roomId) {
-        return repository.findByRoomId(roomId);
-    }
-
-    @GetMapping("/active/{roomCode}")
-    public PollQuestion getActiveQuestion(@PathVariable String roomCode) {
-        Optional<Room> roomOptional = roomRepository.findByRoomCode(roomCode);
-
-        if (roomOptional.isEmpty()) {
-            return null;
-        }
-
-        Room room = roomOptional.get();
-
-        return repository.findFirstByRoomIdOrderByCreatedAtDesc(room.getId());
-    }
-
-
+    // ✅ Student gets active question
     @GetMapping("/active")
     public PollQuestion getActiveQuestion() {
-        return repository.findTopByOrderByIdDesc();
+        return pollQuestionRepository.findTopByOrderByIdDesc();
     }
 
+    // ⚠️ Keep LAST
     @GetMapping("/{id}")
     public PollQuestion getQuestionById(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
+        return pollQuestionRepository.findById(id).orElse(null);
+    }
+
+    // 🔑 helper method
+    private Long extractTeacherId(String token) {
+        String clean = token.replace("Bearer ", "").replace("teacher-", "");
+        return Long.parseLong(clean);
     }
 }
