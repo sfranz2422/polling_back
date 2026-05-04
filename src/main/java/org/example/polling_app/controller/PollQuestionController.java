@@ -1,14 +1,11 @@
 package org.example.polling_app.controller;
 
 import org.example.polling_app.model.PollQuestion;
-import org.example.polling_app.model.PollResponse;
-import org.example.polling_app.model.Room;
 import org.example.polling_app.repository.PollQuestionRepository;
 import org.springframework.web.bind.annotation.*;
-import org.example.polling_app.repository.RoomRepository;
 
 import java.util.List;
-import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/questions")
 @CrossOrigin("*")
