@@ -39,6 +39,10 @@ public class PollQuestionController {
         return repository.findByTeacherId(teacherId);
     }
 
+    @GetMapping("/active")
+    public PollQuestion getActiveQuestion() {
+        return repository.findTopByOrderByCreatedAtDesc();
+    }
 
     @GetMapping("/room/{roomId}")
     public List<PollQuestion> getQuestionsByRoom(@PathVariable Long roomId) {
