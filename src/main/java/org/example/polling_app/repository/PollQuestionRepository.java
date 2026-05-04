@@ -15,5 +15,5 @@ public interface PollQuestionRepository extends JpaRepository<PollQuestion, Long
 
     PollQuestion findFirstByRoomIdOrderByCreatedAtDesc(Long roomId);
     PollQuestion findTopByOrderByCreatedAtDesc();
-
+    PollQuestion findTopByOrderByIdDesc();
 }
