@@ -4,6 +4,7 @@ import org.example.polling_app.dto.LoginRequest;
 import org.example.polling_app.dto.LoginResponse;
 import org.example.polling_app.model.Teacher;
 import org.example.polling_app.repository.TeacherRepository;
+import org.example.polling_app.security.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +18,16 @@ public class AuthController {
 
     private final TeacherRepository teacherRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public AuthController(
             TeacherRepository teacherRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil
     ) {
         this.teacherRepository = teacherRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
@@ -42,7 +46,7 @@ public class AuthController {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
 
-        String token = "teacher-" + teacher.getId();
+        String token = jwtUtil.generateToken(teacher);
 
         return ResponseEntity.ok(new LoginResponse(token));
     }

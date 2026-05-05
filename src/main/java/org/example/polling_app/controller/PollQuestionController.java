@@ -2,6 +2,7 @@ package org.example.polling_app.controller;
 
 import org.example.polling_app.model.PollQuestion;
 import org.example.polling_app.repository.PollQuestionRepository;
+import org.example.polling_app.security.JwtUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,48 +13,39 @@ import java.util.List;
 public class PollQuestionController {
 
     private final PollQuestionRepository pollQuestionRepository;
+    private final JwtUtil jwtUtil;
 
-    public PollQuestionController(PollQuestionRepository pollQuestionRepository) {
+    public PollQuestionController(
+            PollQuestionRepository pollQuestionRepository,
+            JwtUtil jwtUtil
+    ) {
         this.pollQuestionRepository = pollQuestionRepository;
+        this.jwtUtil = jwtUtil;
     }
 
-    // ✅ Get logged-in teacher's questions
     @GetMapping("/my")
     public List<PollQuestion> getMyQuestions(@RequestHeader("Authorization") String token) {
-
-        Long teacherId = extractTeacherId(token);
-
+        Long teacherId = jwtUtil.extractTeacherId(token);
         return pollQuestionRepository.findByTeacherId(teacherId);
     }
 
-    // ✅ Create question (assign teacher automatically)
     @PostMapping
     public PollQuestion createQuestion(
             @RequestHeader("Authorization") String token,
-            @RequestBody PollQuestion question) {
-
-        Long teacherId = extractTeacherId(token);
-
+            @RequestBody PollQuestion question
+    ) {
+        Long teacherId = jwtUtil.extractTeacherId(token);
         question.setTeacherId(teacherId);
-
         return pollQuestionRepository.save(question);
     }
 
-    // ✅ Student gets active question
     @GetMapping("/active")
     public PollQuestion getActiveQuestion() {
         return pollQuestionRepository.findTopByOrderByIdDesc();
     }
 
-    // ⚠️ Keep LAST
     @GetMapping("/{id}")
     public PollQuestion getQuestionById(@PathVariable Long id) {
         return pollQuestionRepository.findById(id).orElse(null);
-    }
-
-    // 🔑 helper method
-    private Long extractTeacherId(String token) {
-        String clean = token.replace("Bearer ", "").replace("teacher-", "");
-        return Long.parseLong(clean);
     }
 }
