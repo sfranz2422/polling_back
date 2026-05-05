@@ -5,6 +5,7 @@ import org.example.polling_app.dto.LoginResponse;
 import org.example.polling_app.model.Teacher;
 import org.example.polling_app.repository.TeacherRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -15,9 +16,14 @@ import java.util.Optional;
 public class AuthController {
 
     private final TeacherRepository teacherRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(TeacherRepository teacherRepository) {
+    public AuthController(
+            TeacherRepository teacherRepository,
+            PasswordEncoder passwordEncoder
+    ) {
         this.teacherRepository = teacherRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
@@ -32,7 +38,7 @@ public class AuthController {
 
         Teacher teacher = teacherOptional.get();
 
-        if (!teacher.getPassword().equals(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), teacher.getPassword())) {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
 
